@@ -1,117 +1,87 @@
 # Cardinus Bot
 
-A multipurpose Discord bot written in Java with JDA and Gradle.
+A multipurpose Discord bot built in Java using the JDA library.
+
+## Features
+
+- Slash command support
+- Extensible command architecture
+- Environment-based configuration
+- Structured logging
+- Planned music playback features
+
+## Prerequisites
+
+- Java 17 or higher
+- Gradle 7.x or higher (bundled)
+
+## Installation
+
+### 1. Create your Discord bot
+
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Create a new application
+3. Navigate to the "Bot" section and create a bot user
+4. Copy the bot token and save it
+5. Under "Privileged Gateway Intents", enable the required intents
+
+### 2. Configure the application
+
+Copy the environment template and add your bot token:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+```
+BOT_TOKEN=your_token_here
+```
+
+Alternatively, you can:
+- Set the `BOT_TOKEN` environment variable
+- Use `config.properties` (see `src/main/resources/config.example.properties`)
+
+## Building
+
+```bash
+./gradlew build
+```
+
+## Running
+
+```bash
+./gradlew run
+```
+
+The bot will register slash commands and connect to Discord.
 
 ## Project Structure
 
 ```
 src/main/java/gg/cardinus/bot/
-├── core/        - Bot bootstrap (Cardinus), SlashCommand interface, CommandRegistry
-├── commands/    - Command implementations (e.g., PingCommand)
-├── config/      - Configuration management (Config class)
-└── music/       - Placeholder for future music features
+├── core/        Core bot logic, command interface, and registry
+├── commands/    Command implementations
+├── config/      Configuration and environment loading
+└── music/       Music features (future)
 ```
 
-## Requirements
+## Development
 
-- **Java**: 17 or higher
-- **Gradle**: 7.x or higher (included via Gradle Wrapper)
+### Adding a Command
 
-## Setup
-
-### 1. Configure Bot Token
-
-**Recommended: Using .env file**
-
-Copy the example environment file:
-```bash
-cp .env.example .env
-```
-
-Then edit `.env` and add your Discord bot token:
-```
-BOT_TOKEN=YOUR_TOKEN_HERE
-```
-
-**Alternative: Using config.properties**
-
-Copy the example configuration file:
-```bash
-cp src/main/resources/config.example.properties config.properties
-```
-
-Then edit `config.properties` and add your Discord bot token:
-```properties
-bot.token=YOUR_TOKEN_HERE
-```
-
-**Alternative: Using environment variable**
-
-Set the `BOT_TOKEN` environment variable:
-```bash
-# Linux/macOS
-export BOT_TOKEN=your_token_here
-
-# Windows (PowerShell)
-$env:BOT_TOKEN="your_token_here"
-
-# Windows (CMD)
-set BOT_TOKEN=your_token_here
-```
-
-### 2. Get Your Bot Token
-
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a new application
-3. Go to the "Bot" section and create a bot user
-4. Copy the bot token (keep it secret!)
-5. Enable "Message Content Intent" under Privileged Gateway Intents
-
-## Build
-
-```bash
-# Build the project
-./gradlew build
-
-# On Windows
-gradlew.bat build
-```
-
-## Run
-
-```bash
-# Run using Gradle
-./gradlew run
-
-# On Windows
-gradlew.bat run
-```
-
-The bot will start and register slash commands. By default, commands are registered as guild commands for faster testing.
-
-## Adding Commands
-
-To add a new slash command:
-
-1. Create a new class in `src/main/java/gg/cardinus/bot/commands/`
-2. Implement the `SlashCommand` interface
-3. Register it in `Cardinus.registerCommands()`:
+Create a new class implementing `SlashCommand`:
 
 ```java
-commandRegistry.register(new YourCommand());
-```
-
-Example:
-```java
-public class HelloCommand implements SlashCommand {
+public class MyCommand implements SlashCommand {
     @Override
     public String getName() {
-        return "hello";
+        return "mycommand";
     }
     
     @Override
     public String getDescription() {
-        return "Say hello";
+        return "My command description";
     }
     
     @Override
@@ -121,22 +91,33 @@ public class HelloCommand implements SlashCommand {
     
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.reply("Hello, " + event.getUser().getAsTag() + "!").queue();
+        event.reply("Response").queue();
     }
 }
 ```
 
-## Production Deployment
+Register it in `Cardinus.registerCommands()`:
 
-**TODO**: For production, switch slash command registration from guild to global:
-- In `Cardinus.java`, set `GUILD_ID = null`
-- Global commands take up to 1 hour to propagate across Discord
+```java
+commandRegistry.register(new MyCommand());
+```
+
+### Command Registration
+
+Commands are registered as guild commands for faster testing. For production, set `GUILD_ID = null` in `Cardinus.java` to register globally (note: global commands take ~1 hour to propagate).
+
+## Architecture
+
+- **SlashCommand Interface** - Defines the contract for all commands
+- **CommandRegistry** - Central command registration and lookup
+- **Config** - Loads configuration from `.env`, environment variables, or `config.properties`
+- **Cardinus** - Main entry point and event listener
 
 ## Dependencies
 
-- **JDA** 5.x - Java Discord API library
-- **SLF4J & Logback** - Logging framework
-- **Guava** - Utility library
+- JDA 5.x - Discord API wrapper
+- Logback & SLF4J - Logging
+- dotenv-java - Environment variable loading
 
 ## License
 
