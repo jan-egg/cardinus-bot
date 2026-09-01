@@ -56,6 +56,27 @@ Alternatively, you can:
 
 The bot will register slash commands and connect to Discord.
 
+## Docker
+
+Docker Compose reads `BOT_TOKEN` from the untracked `.env` file and passes it to
+the container at runtime. The `.env` file is excluded from the image build.
+
+```bash
+docker compose up --build -d
+```
+
+View logs with:
+
+```bash
+docker compose logs -f
+```
+
+Stop the bot with:
+
+```bash
+docker compose down
+```
+
 ## Project Structure
 
 ```

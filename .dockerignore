@@ -1,0 +1,15 @@
+.env
+.env.local
+.env.*.local
+config.properties
+config.local.properties
+.git
+.gradle
+.idea
+.vscode
+build
+logs
+*.log
+*.key
+*.pem
+README.md
