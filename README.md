@@ -42,6 +42,19 @@ Alternatively, you can:
 - Set the `BOT_TOKEN` environment variable
 - Use `config.properties` (see `src/main/resources/config.example.properties`)
 
+### YouTube OAuth
+
+Some YouTube videos require sign-in before they expose an audio stream. On the
+first `/play` request, the bot starts the youtube-source OAuth device flow and
+prints authorization instructions in its logs. Complete that flow with a
+separate Google account, then add the printed refresh token to `.env`:
+
+```dotenv
+YOUTUBE_OAUTH_REFRESH_TOKEN=your_refresh_token
+```
+
+Treat this refresh token as a secret. The `.env` file is excluded from Git.
+
 ## Building
 
 ```bash

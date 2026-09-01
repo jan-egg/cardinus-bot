@@ -47,20 +47,21 @@ public class PlayCommand implements SlashCommand {
             return;
         }
 
-        event.deferReply().queue(); // track loading can exceed Discord's 3s window
+        String input = event.getOption("query").getAsString();
+        String query = input.startsWith("http://") || input.startsWith("https://")
+            ? input
+            : "ytsearch:" + input; // bare words → YouTube search
 
-        AudioChannel channel = memberState.getChannel();
-        AudioManager audioManager = guild.getAudioManager();
+        event.deferReply().queue(hook -> {
+            hook.editOriginal("Searching...").queue();
 
-        GuildMusicManager musicManager = PlayerManager.get().getGuildMusicManager(guild);
-        audioManager.setSendingHandler(musicManager.sendHandler);
-        audioManager.openAudioConnection(channel);
+            AudioChannel channel = memberState.getChannel();
+            AudioManager audioManager = guild.getAudioManager();
+            GuildMusicManager musicManager = PlayerManager.get().getGuildMusicManager(guild);
+            audioManager.setSendingHandler(musicManager.sendHandler);
+            audioManager.openAudioConnection(channel);
 
-        String query = event.getOption("query").getAsString();
-        if (!query.startsWith("http://") && !query.startsWith("https://")) {
-            query = "ytsearch:" + query; // bare words → YouTube search
-        }
-
-        PlayerManager.get().loadAndPlay(event, query);
+            PlayerManager.get().loadAndPlay(event, query);
+        });
     }
 }

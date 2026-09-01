@@ -17,13 +17,16 @@ import org.slf4j.LoggerFactory;
 public class Config {
     private static final Logger logger = LoggerFactory.getLogger(Config.class);
     private static final String BOT_TOKEN_ENV = "BOT_TOKEN";
+    private static final String GUILD_ID_ENV = "GUILD_ID";
     private static final String ENV_FILE = ".env";
     private static final String CONFIG_FILE = "config.properties";
     
     private final String botToken;
+    private final String guildId;
     
     public Config() {
         this.botToken = loadBotToken();
+        this.guildId = loadOptionalEnvironmentValue(GUILD_ID_ENV);
     }
     
     /**
@@ -79,8 +82,29 @@ public class Config {
             "Bot token not found. Create .env file with BOT_TOKEN, set BOT_TOKEN environment variable, or create config.properties file."
         );
     }
+
+    private String loadOptionalEnvironmentValue(String name) {
+        Path envPath = Paths.get(ENV_FILE);
+        if (Files.exists(envPath)) {
+            try {
+                String value = Dotenv.load().get(name);
+                if (value != null && !value.isBlank()) {
+                    return value;
+                }
+            } catch (Exception e) {
+                logger.warn("Failed to read {}: {}", ENV_FILE, e.getMessage());
+            }
+        }
+
+        String value = System.getenv(name);
+        return value == null || value.isBlank() ? null : value;
+    }
     
     public String getBotToken() {
         return botToken;
+    }
+
+    public String getGuildId() {
+        return guildId;
     }
 }

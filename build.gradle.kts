@@ -17,6 +17,7 @@ java {
 repositories {
     mavenCentral()
     maven("https://maven.lavalink.dev/releases") // youtube-source lives here
+    maven("https://maven.lavalink.dev/snapshots") // Java 17-compatible libdave-jvm
 }
 
 dependencies {
@@ -25,7 +26,11 @@ dependencies {
 
     // Audio
     implementation("dev.arbjerg:lavaplayer:2.2.6")      // ⚠ VERIFY latest 2.2.x
-    implementation("dev.lavalink.youtube:v2:1.13.0")    // ⚠ VERIFY latest
+    implementation("dev.lavalink.youtube:v2:1.18.2")
+    implementation("moe.kyokobot.libdave:adapter-jda:ce725965e")
+    implementation("moe.kyokobot.libdave:impl-jni:ce725965e")
+    runtimeOnly("moe.kyokobot.libdave:natives-win-x86-64:ce725965e")
+    runtimeOnly("moe.kyokobot.libdave:natives-linux-x86-64:ce725965e")
 
     // Logging (yours — fine as-is)
     implementation("org.slf4j:slf4j-api:2.0.9")

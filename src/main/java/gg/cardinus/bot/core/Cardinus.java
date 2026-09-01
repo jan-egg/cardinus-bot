@@ -1,8 +1,12 @@
 package gg.cardinus.bot.core;
 
 import gg.cardinus.bot.commands.PingCommand;
+import gg.cardinus.bot.commands.PlayCommand;
 import gg.cardinus.bot.config.Config;
+import moe.kyokobot.libdave.NativeDaveFactory;
+import moe.kyokobot.libdave.jda.LDJDADaveSessionFactory;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -17,33 +21,33 @@ import org.slf4j.LoggerFactory;
  */
 public class Cardinus extends ListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(Cardinus.class);
-    private static final String GUILD_ID = null; // TODO: Set to your test guild ID for faster command registration
-    
+
     private final CommandRegistry commandRegistry;
-    
+
     public Cardinus() {
         this.commandRegistry = new CommandRegistry();
         registerCommands();
     }
-    
+
     /**
      * Registers all slash commands.
      */
     private void registerCommands() {
         commandRegistry.register(new PingCommand());
+        commandRegistry.register(new PlayCommand());
         // Add more commands here as the bot grows
     }
-    
+
     /**
      * Handles slash command interactions.
-     * 
+     *
      * @param event The slash command event
      */
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         String commandName = event.getName();
         SlashCommand command = commandRegistry.get(commandName);
-        
+
         if (command != null) {
             try {
                 command.execute(event);
@@ -57,30 +61,31 @@ public class Cardinus extends ListenerAdapter {
             event.reply("Unknown command.").setEphemeral(true).queue();
         }
     }
-    
+
     /**
      * Starts the bot.
-     * 
+     *
      * @throws InterruptedException if the bot is interrupted
      */
     public void start() throws InterruptedException {
         Config config = new Config();
-        
+
         var jda = JDABuilder.createDefault(config.getBotToken())
-            .enableIntents(GatewayIntent.DIRECT_MESSAGE_REACTIONS)
-            .setActivity(Activity.playing("slash commands"))
+            .enableIntents(GatewayIntent.GUILD_VOICE_STATES) // needed to see who's in a voice channel
+            .setAudioModuleConfig(new AudioModuleConfig()
+                .withDaveSessionFactory(new LDJDADaveSessionFactory(new NativeDaveFactory())))
+            .setActivity(Activity.playing("music in Cardinus"))
             .addEventListeners(this)
             .build();
-        
+
         jda.awaitReady();
         logger.info("Bot is ready!");
-        
-        // Register slash commands with JDA
-        // TODO: Set GUILD_ID to your test server for faster command registration
-        // For production, set to null to register globally
-        commandRegistry.registerWithJDA(jda, GUILD_ID);
+
+        // Register slash commands with JDA.
+        // GUILD_ID set = instant registration in that server; null = global (slow).
+        commandRegistry.registerWithJDA(jda, config.getGuildId());
     }
-    
+
     /**
      * Entry point for the bot.
      */
