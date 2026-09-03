@@ -1,6 +1,6 @@
 # Cardinus Bot
 
-TypeScript Discord music bot using Discord.js and Lavalink.
+Discord music bot built with TypeScript, Discord.js, and Lavalink.
 
 ## Requirements
 
@@ -8,36 +8,35 @@ TypeScript Discord music bot using Discord.js and Lavalink.
 - Docker Desktop
 - A Discord application with a bot user
 
-## Configuration
+## Setup
 
-Copy `.env.example` to `.env` and fill in the values:
+Create the local environment file:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-- `DISCORD_TOKEN`: Bot token from the Discord Developer Portal
-- `DISCORD_CLIENT_ID`: Application ID from the General Information page
-- `DISCORD_GUILD_ID`: Optional test server ID. Leave blank for global commands.
+Set `DISCORD_TOKEN`, `DISCORD_CLIENT_ID`, and optionally
+`DISCORD_GUILD_ID` in `.env`. Set a private `LAVALINK_PASSWORD` shared by the
+bot and Lavalink services.
 
-The `.env` file is ignored by Git and must never be committed.
+The `.env` file is ignored by Git and must not be committed.
 
-## Install and Run
+## Run
 
 ```powershell
 npm install
 npm run register
-npm start
+docker compose up --build -d
 ```
 
-## Docker
+View logs:
 
 ```powershell
-docker compose up --build -d
-docker compose logs -f cardinus
+docker compose logs -f
 ```
 
-Stop the services with:
+Stop the services:
 
 ```powershell
 docker compose down
@@ -45,25 +44,12 @@ docker compose down
 
 ## Commands
 
-- `/ping` checks the bot connection.
-- `/play query` searches YouTube or loads a URL.
-- `/skip` skips the current track.
-- `/stop` stops playback and leaves the voice channel.
-- `/queue` lists queued tracks.
-- `/nowplaying` shows the current track.
-
-## Project Structure
-
-```text
-src/
-├── commands.ts          Slash-command definitions and handlers
-├── config.ts            Environment configuration
-├── index.ts             Discord and Lavalink startup
-└── register-commands.ts Slash-command registration
-lavalink/
-├── application.yml      Lavalink server configuration
-└── Dockerfile           Lavalink image with YouTube source plugin
-```
+- `/ping`
+- `/play query`
+- `/skip`
+- `/stop`
+- `/queue`
+- `/nowplaying`
 
 ## License
 

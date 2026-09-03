@@ -4,10 +4,9 @@ services:
     restart: unless-stopped
     environment:
       - _JAVA_OPTIONS=-Xmx512m
+      - LAVALINK_PASSWORD=${LAVALINK_PASSWORD:?Set LAVALINK_PASSWORD in .env}
     volumes:
       - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro
-    ports:
-      - "2333:2333"
   cardinus:
     build: .
     restart: unless-stopped

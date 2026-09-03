@@ -13,6 +13,6 @@ export const config = {
   lavalink: {
     host: process.env.LAVALINK_HOST ?? 'localhost',
     port: Number(process.env.LAVALINK_PORT ?? 2333),
-    password: process.env.LAVALINK_PASSWORD ?? 'youshallnotpass'
+    password: required('LAVALINK_PASSWORD')
   }
 };
