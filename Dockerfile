@@ -1,22 +1,15 @@
-FROM gradle:8.10-jdk17 AS build
-
+FROM node:22-bookworm-slim AS build
 WORKDIR /app
-
-COPY gradlew gradlew.bat settings.gradle.kts build.gradle.kts gradle.properties ./
-COPY gradle ./gradle
-RUN chmod +x gradlew
-
+COPY package*.json tsconfig.json ./
+RUN npm ci
 COPY src ./src
-RUN ./gradlew installDist --no-daemon
+RUN npm run build
 
-FROM eclipse-temurin:17-jre
-
+FROM node:22-bookworm-slim
 WORKDIR /app
-
-RUN useradd --system --uid 10001 --create-home cardinus
-COPY --from=build /app/build/install/cardinus-bot ./
-RUN chown -R cardinus:cardinus /app
-
-USER cardinus
-
-ENTRYPOINT ["/app/bin/cardinus-bot"]
+ENV NODE_ENV=production
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY --from=build /app/src ./src
+USER node
+CMD ["npm", "run", "start"]

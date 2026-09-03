@@ -1,44 +1,12 @@
-# Gradle
-build/
-.gradle/
-*.gradle~
-gradle-app.setting
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-.DS_Store
-*.iml
-*.iws
-*.ipr
-out/
-
-# Java
-*.class
-*.jar
-*.war
-*.nar
-*.zip
-*.tar.gz
-*.rar
-*.log
-
-# Project-specific (SECRETS - NEVER COMMIT)
-config.properties
-config.local.properties
+node_modules/
+dist/
 .env
-.env.local
 .env.*.local
-*.key
-*.pem
-
-# OS
+npm-debug.log*
+.yarn/
+.pnpm-store/
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
-
-# Virtual machine crash logs
-hs_err_pid*
-replay_pid*
+*.log

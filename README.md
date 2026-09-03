@@ -1,157 +1,69 @@
 # Cardinus Bot
 
-A multipurpose Discord bot built in Java using the JDA library.
+TypeScript Discord music bot using Discord.js and Lavalink.
 
-## Features
+## Requirements
 
-- Slash command support
-- Extensible command architecture
-- Environment-based configuration
-- Structured logging
-- Planned music playback features
+- Node.js 22 or later
+- Docker Desktop
+- A Discord application with a bot user
 
-## Prerequisites
+## Configuration
 
-- Java 17 or higher
-- Gradle 7.x or higher (bundled)
+Copy `.env.example` to `.env` and fill in the values:
 
-## Installation
-
-### 1. Create your Discord bot
-
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a new application
-3. Navigate to the "Bot" section and create a bot user
-4. Copy the bot token and save it
-5. Under "Privileged Gateway Intents", enable the required intents
-
-### 2. Configure the application
-
-Copy the environment template and add your bot token:
-
-```bash
-cp .env.example .env
+```powershell
+Copy-Item .env.example .env
 ```
 
-Edit `.env`:
+- `DISCORD_TOKEN`: Bot token from the Discord Developer Portal
+- `DISCORD_CLIENT_ID`: Application ID from the General Information page
+- `DISCORD_GUILD_ID`: Optional test server ID. Leave blank for global commands.
+
+The `.env` file is ignored by Git and must never be committed.
+
+## Install and Run
+
+```powershell
+npm install
+npm run register
+npm start
 ```
-BOT_TOKEN=your_token_here
-```
-
-Alternatively, you can:
-- Set the `BOT_TOKEN` environment variable
-- Use `config.properties` (see `src/main/resources/config.example.properties`)
-
-### YouTube OAuth
-
-Some YouTube videos require sign-in before they expose an audio stream. On the
-first `/play` request, the bot starts the youtube-source OAuth device flow and
-prints authorization instructions in its logs. Complete that flow with a
-separate Google account, then add the printed refresh token to `.env`:
-
-```dotenv
-YOUTUBE_OAUTH_REFRESH_TOKEN=your_refresh_token
-```
-
-Treat this refresh token as a secret. The `.env` file is excluded from Git.
-
-## Building
-
-```bash
-./gradlew build
-```
-
-## Running
-
-```bash
-./gradlew run
-```
-
-The bot will register slash commands and connect to Discord.
 
 ## Docker
 
-Docker Compose reads `BOT_TOKEN` from the untracked `.env` file and passes it to
-the container at runtime. The `.env` file is excluded from the image build.
-
-```bash
+```powershell
 docker compose up --build -d
+docker compose logs -f cardinus
 ```
 
-View logs with:
+Stop the services with:
 
-```bash
-docker compose logs -f
-```
-
-Stop the bot with:
-
-```bash
+```powershell
 docker compose down
 ```
 
+## Commands
+
+- `/ping` checks the bot connection.
+- `/play query` searches YouTube or loads a URL.
+- `/skip` skips the current track.
+- `/stop` stops playback and leaves the voice channel.
+- `/queue` lists queued tracks.
+- `/nowplaying` shows the current track.
+
 ## Project Structure
 
+```text
+src/
+├── commands.ts          Slash-command definitions and handlers
+├── config.ts            Environment configuration
+├── index.ts             Discord and Lavalink startup
+└── register-commands.ts Slash-command registration
+lavalink/
+├── application.yml      Lavalink server configuration
+└── Dockerfile           Lavalink image with YouTube source plugin
 ```
-src/main/java/gg/cardinus/bot/
-├── core/        Core bot logic, command interface, and registry
-├── commands/    Command implementations
-├── config/      Configuration and environment loading
-└── music/       Music features (future)
-```
-
-## Development
-
-### Adding a Command
-
-Create a new class implementing `SlashCommand`:
-
-```java
-public class MyCommand implements SlashCommand {
-    @Override
-    public String getName() {
-        return "mycommand";
-    }
-    
-    @Override
-    public String getDescription() {
-        return "My command description";
-    }
-    
-    @Override
-    public SlashCommandData getCommandData() {
-        return Commands.slash(getName(), getDescription());
-    }
-    
-    @Override
-    public void execute(SlashCommandInteractionEvent event) {
-        event.reply("Response").queue();
-    }
-}
-```
-
-Register it in `Cardinus.registerCommands()`:
-
-```java
-commandRegistry.register(new MyCommand());
-```
-
-### Command Registration
-
-Commands are registered as guild commands for faster testing. For production, set `GUILD_ID = null` in `Cardinus.java` to register globally (note: global commands take ~1 hour to propagate).
-
-## Architecture
-
-- **SlashCommand Interface** - Defines the contract for all commands
-- **CommandRegistry** - Central command registration and lookup
-- **Config** - Loads configuration from `.env`, environment variables, or `config.properties`
-- **Cardinus** - Main entry point and event listener
-
-## Dependencies
-
-- JDA 5.x - Discord API wrapper
-- Logback & SLF4J - Logging
-- dotenv-java - Environment variable loading
 
 ## License
 

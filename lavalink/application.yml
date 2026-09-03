@@ -1,0 +1,23 @@
+server:
+  port: 2333
+  address: 0.0.0.0
+
+lavalink:
+  server:
+    password: ${LAVALINK_PASSWORD:youshallnotpass}
+    sources:
+      youtube: false
+
+plugins:
+  youtube:
+    enabled: true
+    allowSearch: true
+    clients:
+      - MUSIC
+      - ANDROID_VR
+      - WEB
+      - TVHTML5_SIMPLY
+
+metrics:
+  prometheus:
+    enabled: false
