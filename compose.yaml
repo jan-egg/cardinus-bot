@@ -6,7 +6,6 @@ services:
       - _JAVA_OPTIONS=-Xmx512m
     volumes:
       - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro
-      - ./lavalink/plugins:/opt/Lavalink/plugins
     ports:
       - "2333:2333"
   cardinus:

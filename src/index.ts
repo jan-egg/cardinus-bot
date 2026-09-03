@@ -10,8 +10,12 @@ const lavalink = new LavalinkManager({
   autoSkip: true
 });
 
+lavalink.nodeManager.on('error', (_node, error) => {
+  console.error('Lavalink node error:', error.message);
+});
+
 client.on('raw', (packet) => lavalink.sendRawData(packet));
-client.once('ready', (readyClient) => {
+client.once('clientReady', (readyClient) => {
   void lavalink.init({ id: readyClient.user.id, username: readyClient.user.username });
   console.log(`Logged in as ${readyClient.user.tag}`);
 });
