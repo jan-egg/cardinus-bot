@@ -12,10 +12,13 @@ plugins:
   youtube:
     enabled: true
     allowSearch: true
+    oauth:
+      enabled: true
     clients:
       - MUSIC
       - ANDROID_VR
       - WEB
+      - TV
       - TVHTML5_SIMPLY
 
 metrics:

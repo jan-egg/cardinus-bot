@@ -22,6 +22,13 @@ bot and Lavalink services.
 
 The `.env` file is ignored by Git and must not be committed.
 
+If YouTube requests verification, follow the device authorization URL and code
+printed by Lavalink in the logs:
+
+```powershell
+docker compose logs -f lavalink
+```
+
 ## Run
 
 ```powershell
