@@ -2,15 +2,59 @@ services:
   lavalink:
     build: ./lavalink
     restart: unless-stopped
+    depends_on:
+      - yt-cipher
     environment:
       - _JAVA_OPTIONS=-Xmx512m
       - LAVALINK_PASSWORD=${LAVALINK_PASSWORD:?Set LAVALINK_PASSWORD in .env}
+      - YOUTUBE_REFRESH_TOKEN=${YOUTUBE_REFRESH_TOKEN:-}
+      - SPOTIFY_ENABLED=${SPOTIFY_ENABLED:-false}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID:-}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET:-}
     volumes:
       - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro
+
+  # Solves YouTube's signature ciphers for Lavalink; only reachable inside this network.
+  yt-cipher:
+    image: ghcr.io/kikkia/yt-cipher:master
+    restart: unless-stopped
+    environment:
+      - OVERRIDE_PLAYER_VARIANT=IAS
+
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - ollama:/root/.ollama
+
+  rag:
+    build: ./rag
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    environment:
+      - RAG_API_KEY=${RAG_API_KEY:-}
+      - RAG_KNOWLEDGE_DIR=/knowledge
+      - OLLAMA_URL=${OLLAMA_URL:-http://ollama:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1:8b}
+    ports:
+      # API docs and uploads at http://localhost:8000/docs (this machine only).
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - rag-data:/data
+      - ./knowledge:/knowledge:ro
+
   cardinus:
     build: .
     restart: unless-stopped
     depends_on:
       - lavalink
+      - rag
     env_file:
       - .env
+    environment:
+      - RAG_URL=http://rag:8000
+
+volumes:
+  ollama:
+  rag-data:

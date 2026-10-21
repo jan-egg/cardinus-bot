@@ -6,20 +6,58 @@ lavalink:
   server:
     password: ${LAVALINK_PASSWORD}
     sources:
+      # Replaced by the youtube-source plugin below.
       youtube: false
+      soundcloud: true
+      bandcamp: true
+      http: true
+    timeouts:
+      connectTimeoutMs: 10000
+      connectionRequestTimeoutMs: 10000
+      socketTimeoutMs: 10000
 
 plugins:
   youtube:
     enabled: true
     allowSearch: true
+    # Signature deciphering is the part of YouTube that breaks most often.
+    # The yt-cipher container keeps up with YouTube's player changes.
+    remoteCipher:
+      url: ${YT_CIPHER_URL:http://yt-cipher:8001}
+      userAgent: cardinus-bot
     oauth:
       enabled: true
+      # Empty on first run: Lavalink logs a device code to sign in with.
+      # Afterwards it logs a refresh token; put it in .env so restarts stay signed in.
+      refreshToken: ${YOUTUBE_REFRESH_TOKEN:}
     clients:
       - MUSIC
       - ANDROID_VR
       - WEB
+      - WEBEMBEDDED
       - TV
       - TVHTML5_SIMPLY
+
+  lavasrc:
+    # Spotify links are resolved to playable tracks through these searches, in order.
+    providers:
+      - "ytsearch:\"%ISRC%\""
+      - "ytsearch:%QUERY%"
+      - "scsearch:%QUERY%"
+    sources:
+      spotify: ${SPOTIFY_ENABLED:false}
+    spotify:
+      clientId: ${SPOTIFY_CLIENT_ID:}
+      clientSecret: ${SPOTIFY_CLIENT_SECRET:}
+      countryCode: ${SPOTIFY_COUNTRY:US}
+      playlistLoadLimit: 6
+      albumLoadLimit: 6
+
+logging:
+  level:
+    root: INFO
+    lavalink: INFO
+    dev.lavalink.youtube.http.YoutubeOauth2Handler: INFO
 
 metrics:
   prometheus:

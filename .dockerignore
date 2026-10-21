@@ -6,4 +6,6 @@
 .idea
 node_modules
 dist
-*.log
+*.lograg
+knowledge
+lavalink

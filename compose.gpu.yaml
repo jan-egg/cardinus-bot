@@ -1,0 +1,11 @@
+# Lets Ollama use an NVIDIA GPU, which makes answers many times faster.
+# Use it with: docker compose -f compose.yaml -f compose.gpu.yaml up -d
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

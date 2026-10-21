@@ -10,3 +10,8 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 *.log
+knowledge/*
+!knowledge/.gitkeep
+__pycache__/
+.pytest_cache/
+.venv/

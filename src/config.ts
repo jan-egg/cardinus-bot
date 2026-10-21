@@ -14,5 +14,9 @@ export const config = {
     host: process.env.LAVALINK_HOST ?? 'localhost',
     port: Number(process.env.LAVALINK_PORT ?? 2333),
     password: required('LAVALINK_PASSWORD')
+  },
+  rag: {
+    url: process.env.RAG_URL ?? 'http://localhost:8000',
+    apiKey: process.env.RAG_API_KEY ?? ''
   }
 };
